@@ -5,10 +5,13 @@ import json
 import logging
 import os
 import prometheus_client
-import sys
-import time
 import requests
 import signal
+import socket
+import sys
+import time
+
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)-15s :: %(levelname)8s :: %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 logger = logging.getLogger(__name__)
@@ -97,6 +100,12 @@ class Exporter(object):
             name = 'version_info',
             documentation = 'Project version info',
             labelnames = ['project_version'],
+            namespace = namespace
+        )
+
+        self.connected_info = prometheus_client.Gauge(
+            name = 'connected',
+            documentation = 'Is EZ1 is connected',
             namespace = namespace
         )
 
@@ -284,13 +293,30 @@ class Exporter(object):
 
     def __collect_data_from_Inverter(self):
         try:
+            canConnectToEz1=False
+            #Check Connection to EZ1
+            s = socket.socket()
+            try:
+                s.connect((str(self.inverter_ip), str(self.inverter_port))) 
+                canConnectToEz1=True
+            except Exception as e: 
+                logger.warning("Unable to connect to: " + str(self.inverter_ip) + " on Port: " + str(self.inverter_port))
+            finally:
+                s.close()
 
-            for calledFunction in self.objectList:
-                response = requests.get('http://' + str(self.inverter_ip) + ':' + str(self.inverter_port) + '/' + calledFunction)
-                result = response.json()
-                response.close()
+            if canConnectToEz1:
+                self.connected_info.set(1)
+                for calledFunction in self.objectList:
+                    response = requests.get('http://' + str(self.inverter_ip) + ':' + str(self.inverter_port) + '/' + calledFunction)
+                    result = response.json()
+                    response.close()
 
-                self.setMetricsValue(calledFunction, result)
+                    self.setMetricsValue(calledFunction, result)
+            else:
+                #empty Power States
+                self.connected_info.set(0)
+                self.metrics["p1"].set(0)
+                self.metrics["p2"].set(0)
             
             # inverter = APsystemsEZ1M(self.inverter_ip, self.inverter_port)
             # # Get device information
