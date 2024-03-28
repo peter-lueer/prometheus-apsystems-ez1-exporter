@@ -1,2 +1,3 @@
 waitress
 prometheus_client
+requests

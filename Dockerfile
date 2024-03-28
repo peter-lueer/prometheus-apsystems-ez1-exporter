@@ -6,6 +6,7 @@ WORKDIR /app
 
 COPY exporter.py /app/
 COPY requirements.txt /app/
+COPY objectlist.json /app/
 #COPY APsystemsEZ1 /app/
 
 RUN pip install --no-cache-dir -r requirements.txt

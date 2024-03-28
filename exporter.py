@@ -102,7 +102,7 @@ class Exporter(object):
 
         self.metrics = {}
         
-        file_path = os.path.dirname(__file__) + '\\'
+        file_path = os.path.dirname(__file__) + '/'
 
         objectFile = open(file_path + 'objectlist.json')
         self.objectList = json.load(objectFile)
