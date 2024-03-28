@@ -8,7 +8,7 @@ import prometheus_client
 import sys
 import time
 import requests
-#from APsystemsEZ1 import APsystemsEZ1M # import the APsystemsEZ1 library
+import signal
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)-15s :: %(levelname)8s :: %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 logger = logging.getLogger(__name__)
@@ -332,6 +332,10 @@ class Exporter(object):
             logger.info('waiting {}s before next collection cycle'.format(self.__collect_interval_seconds))
             time.sleep(self.__collect_interval_seconds)
 
+def handler(signum, frame):
+    logger.warning("Signal handler called with signal: {1}".format(signum))
+    sys.exit()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -358,6 +362,7 @@ if __name__ == '__main__':
                         help='10-Debug 20-Info 30-Warning 40-Error 50-Critical')
 
     # Start up the server to expose the metrics.
+    signal.signal(signal.SIGABRT, handler)
     e = Exporter(parser.parse_args())
     # Generate some requests.
     while True:
