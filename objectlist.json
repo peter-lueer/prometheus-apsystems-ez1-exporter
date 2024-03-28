@@ -1,0 +1,39 @@
+{
+    "getDeviceInfo":
+    {
+        "data":[
+            { "name" : "deviceId"},
+            { "name" : "devVer","documentation" : "Device Version"},
+            { "name" : "ssid","documentation" : "The SSID that device connected"},
+            { "name" : "ipAddr","documentation" : "The IP address of device", "type":"IP"},
+            { "name" : "minPower","documentation" : "The minimum power that device could set", "type" : "POWER", "unit": "W"},
+            { "name" : "maxPower","documentation" : "The maximum power that device could set", "type" : "POWER", "unit": "W"}
+        ]
+    },
+    "getOutputData":
+    {
+        "data":[
+            { "name" : "p1", "documentation" : "Power - Channel 1", "type" : "POWER", "unit": "W"},
+            { "name" : "e1", "documentation" : "Energy generation after startup - Channel 1", "type" : "POWER", "unit": "kWh"},
+            { "name" : "te1", "documentation" : "Energy generation lifetime - Channel 1", "type" : "POWER", "unit": "kWh"},
+            { "name" : "p2", "documentation" : "Power - Channel 2", "type" : "POWER", "unit": "W"},
+            { "name" : "e2", "documentation" : "Energy generation after startup - Channel 2", "type" : "POWER", "unit": "kWh"},
+            { "name" : "te2", "documentation" : "Energy generation lifetime - Channel 2", "type" : "POWER", "unit": "kWh"}
+        ]
+    },
+    "getAlarm":
+    {
+        "data":[
+            { "name" : "og","type" : "ENUM","enum":["normal","alarm"] },
+            { "name" : "isce1","type" : "ENUM","enum":["normal","alarm"] },
+            { "name" : "isce2","type" : "ENUM","enum":["normal","alarm"] },
+            { "name" : "oe","type" : "ENUM","enum":["normal","alarm"] }
+        ]
+    },
+    "getOnOff":
+    {
+        "data":[
+            { "name" : "status","type" : "ENUM","enum":["On","Off"] }
+        ]
+    }   
+}
