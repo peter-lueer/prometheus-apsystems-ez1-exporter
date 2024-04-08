@@ -24,16 +24,16 @@
     "getAlarm":
     {
         "data":[
-            { "name" : "og","type" : "ENUM","enum":["normal","alarm"] },
-            { "name" : "isce1","type" : "ENUM","enum":["normal","alarm"] },
-            { "name" : "isce2","type" : "ENUM","enum":["normal","alarm"] },
-            { "name" : "oe","type" : "ENUM","enum":["normal","alarm"] }
+            { "name" : "og", "documentation" : "Off grid. - 0: normal 1: alarm", "type" : "ENUM","enum":["normal","alarm"] },
+            { "name" : "isce1", "documentation" : "DC 1 Short Circuit Error - 0: normal 1: alarm", "type" : "ENUM","enum":["normal","alarm"] },
+            { "name" : "isce2", "documentation" : "DC 2 Short Circuit Error - 0: normal 1: alarm", "type" : "ENUM","enum":["normal","alarm"] },
+            { "name" : "oe", "documentation" : "Output fault. - 0: normal 1: alarm", "type" : "ENUM","enum":["normal","alarm"] }
         ]
     },
     "getOnOff":
     {
         "data":[
-            { "name" : "status","type" : "ENUM","enum":["On","Off"] }
+            { "name" : "status", "documentation" : "status - 0: On 1: Off", "type" : "ENUM","enum":["On","Off"] }
         ]
     }   
 }
