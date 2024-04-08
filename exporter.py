@@ -297,8 +297,8 @@ class Exporter(object):
             #Check Connection to EZ1
             s = socket.socket()
             try:
-                s.connect((str(self.inverter_ip), str(self.inverter_port))) 
-                canConnectToEz1=True
+                s.connect((self.inverter_ip, self.inverter_port)) 
+                canConnectToEz1 = True
             except Exception as e: 
                 logger.warning("Unable to connect to: " + str(self.inverter_ip) + " on Port: " + str(self.inverter_port))
             finally:
