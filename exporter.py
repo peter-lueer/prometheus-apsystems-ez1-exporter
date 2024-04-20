@@ -28,7 +28,10 @@ class Exporter(object):
         """
         
         self.__metric_port = int(args.metric_port)
-        self.__collect_interval_seconds = args.collect_interval_seconds
+        self.__collect_interval_seconds = int(args.collect_interval_seconds)
+        self.__collect_interval_seconds_Backup = int(args.collect_interval_seconds)
+        self.__collect_Error = 0
+        self.__collect_Max_Connect_Error = 5
         self.__log_level = int(args.log_level)
         self.__log_level = int(os.getenv('LOG_LEVEL',30))
         
@@ -51,6 +54,12 @@ class Exporter(object):
         logger.info(
             "exposing metrics on port '{}'".format(self.__metric_port)
         )
+
+        #Delete old unhealthy file
+        file_path = os.path.dirname(__file__) + '/'
+        self.__healthy_file_path = file_path + "maybe_unhealthy"
+        if os.path.exists(self.__healthy_file_path):
+            os.remove(self.__healthy_file_path)
 
         self.__init_client(args.config_file, args.inverter_ip, args.inverter_port)
         self.__init_metrics()
@@ -292,15 +301,19 @@ class Exporter(object):
 
 
     def __collect_data_from_Inverter(self):
+
         try:
             canConnectToEz1=False
             #Check Connection to EZ1
             s = socket.socket()
             try:
+                s.settimeout(5)
                 s.connect((self.inverter_ip, self.inverter_port)) 
                 canConnectToEz1 = True
+                self.__collect_Error = 0
             except Exception as e: 
                 logger.warning("Unable to connect to: " + str(self.inverter_ip) + " on Port: " + str(self.inverter_port))
+                self.__collect_Error += 1
             finally:
                 s.close()
 
@@ -337,6 +350,7 @@ class Exporter(object):
             
         except Exception as ex:
             logger.error('Fail while Reading from Inverter')
+            self.__collect_Error += 1
 
     def collect(self):
         """
@@ -355,6 +369,13 @@ class Exporter(object):
                 "collecting data from inverter failed with: {1}".format(str(e))
             )
         finally:
+            if  self.__collect_Error >= self.__collect_Max_Connect_Error:
+                self.__collect_Error = self.__collect_Max_Connect_Error
+                f = open(self.__healthy_file_path, 'w')
+                f.write("maybe")
+                f.close()
+
+            self.__collect_interval_seconds = self.__collect_interval_seconds_Backup * (self.__collect_Error + 1)
             logger.info('waiting {}s before next collection cycle'.format(self.__collect_interval_seconds))
             time.sleep(self.__collect_interval_seconds)
 

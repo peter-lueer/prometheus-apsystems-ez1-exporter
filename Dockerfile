@@ -13,4 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 CMD [ "python", "./exporter.py" ]
 
+HEALTHCHECK --interval=10m CMD [ ! -f "/app/maybe_unhealthy"]
+
 EXPOSE 9120
