@@ -325,7 +325,6 @@ class Exporter(object):
                     response = requests.get('http://' + str(self.inverter_ip) + ':' + str(self.inverter_port) + '/' + calledFunction)
                     result = response.json()
                     response.close()
-                    logger.debug("Returned Data: " + str(result))
                     
                     self.setMetricsValue(calledFunction, result)
 
