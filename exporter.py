@@ -268,7 +268,7 @@ class Exporter(object):
     
     def setMetricsValue(self, calledFunction, resultJsonData):
 
-        logger.debug("Read Values for {0}", str(calledFunction))
+        logger.debug("Read Values for " + calledFunction)
         try:
             for dataObject in resultJsonData['data']:
                 name = dataObject
