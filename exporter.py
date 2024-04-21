@@ -12,7 +12,6 @@ import sys
 import time
 
 
-
 logging.basicConfig(level=logging.INFO, format='%(asctime)-15s :: %(levelname)8s :: %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 logger = logging.getLogger(__name__)
 
@@ -325,6 +324,8 @@ class Exporter(object):
                     response.close()
 
                     self.setMetricsValue(calledFunction, result)
+                    if os.path.exists(self.__healthy_file_path):
+                        os.remove(self.__healthy_file_path)
             else:
                 #empty Power States
                 self.connected_info.set(0)
