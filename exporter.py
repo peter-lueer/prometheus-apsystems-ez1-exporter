@@ -307,9 +307,12 @@ class Exporter(object):
             s = socket.socket()
             try:
                 s.settimeout(5)
+
+                logger.debug("Check Inverter online")
                 s.connect((self.inverter_ip, self.inverter_port)) 
                 canConnectToEz1 = True
                 self.__collect_Error = 0
+                logger.debug("Inverter is online, lets go")
             except Exception as e: 
                 logger.warning("Unable to connect to: " + str(self.inverter_ip) + " on Port: " + str(self.inverter_port))
                 self.__collect_Error += 1
@@ -319,11 +322,15 @@ class Exporter(object):
             if canConnectToEz1:
                 self.connected_info.set(1)
                 for calledFunction in self.objectList:
+                    logger.debug("Collect " + calledFunction + " from "+ str(self.inverter_ip) + ':' + str(self.inverter_port))
                     response = requests.get('http://' + str(self.inverter_ip) + ':' + str(self.inverter_port) + '/' + calledFunction)
                     result = response.json()
                     response.close()
-
+                    logger.debug("Returned Data: " + result)
+                    
                     self.setMetricsValue(calledFunction, result)
+
+                    logger.info("Data collected and published")
                     if os.path.exists(self.__healthy_file_path):
                         os.remove(self.__healthy_file_path)
             else:
@@ -372,6 +379,7 @@ class Exporter(object):
         finally:
             if  self.__collect_Error >= self.__collect_Max_Connect_Error:
                 self.__collect_Error = self.__collect_Max_Connect_Error
+                logger.debug("Maybe offline - write File")
                 f = open(self.__healthy_file_path, 'w')
                 f.write("maybe")
                 f.close()
