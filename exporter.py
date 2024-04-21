@@ -31,8 +31,7 @@ class Exporter(object):
         self.__collect_interval_seconds_Backup = int(args.collect_interval_seconds)
         self.__collect_Error = 0
         self.__collect_Max_Connect_Error = 5
-        self.__log_level = int(args.log_level)
-        self.__log_level = int(os.getenv('LOG_LEVEL',30))
+        self.__log_level = int(os.getenv('LOG_LEVEL',args.log_level))
         
         if self.__log_level == 10:
             logger.debug("Set Logging to DEBUG")
