@@ -27,8 +27,8 @@ class Exporter(object):
         """
         
         self.__metric_port = int(args.metric_port)
-        self.__collect_interval_seconds = int(args.collect_interval_seconds)
-        self.__collect_interval_seconds_Backup = int(args.collect_interval_seconds)
+        self.__collect_interval_seconds = int(os.getenv('Collect_Interval_Seconds',args.collect_interval_seconds))
+        self.__collect_interval_seconds_Backup = self.__collect_interval_seconds
         self.__collect_Error = 0
         self.__collect_Max_Connect_Error = 5
         self.__log_level = int(os.getenv('LOG_LEVEL',args.log_level))
