@@ -300,8 +300,9 @@ class Exporter(object):
 
     def __collect_data_from_Inverter(self):
 
+        canConnectToEz1=False
+
         try:
-            canConnectToEz1=False
             #Check Connection to EZ1
             s = socket.socket()
             try:
@@ -322,7 +323,7 @@ class Exporter(object):
                 self.connected_info.set(1)
                 for calledFunction in self.objectList:
                     logger.debug("Collect " + calledFunction + " from "+ str(self.inverter_ip) + ':' + str(self.inverter_port))
-                    response = requests.get('http://' + str(self.inverter_ip) + ':' + str(self.inverter_port) + '/' + calledFunction)
+                    response = requests.get('http://' + str(self.inverter_ip) + ':' + str(self.inverter_port) + '/' + calledFunction, timeout = 5)
                     result = response.json()
                     response.close()
                     
@@ -331,12 +332,7 @@ class Exporter(object):
                     logger.info("Data collected and published")
                     if os.path.exists(self.__healthy_file_path):
                         os.remove(self.__healthy_file_path)
-            else:
-                #empty Power States
-                self.connected_info.set(0)
-                self.metrics["p1"].set(0)
-                self.metrics["p2"].set(0)
-            
+
             # inverter = APsystemsEZ1M(self.inverter_ip, self.inverter_port)
             # # Get device information
             # device_info = inverter.get_device_info()
@@ -357,6 +353,12 @@ class Exporter(object):
         except Exception as ex:
             logger.error('Fail while Reading from Inverter')
             self.__collect_Error += 1
+
+        if canConnectToEz1 == False:
+            #empty Power States - not connected
+            self.connected_info.set(0)
+            self.metrics["p1"].set(0)
+            self.metrics["p2"].set(0)
 
     def collect(self):
         """
