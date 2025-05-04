@@ -209,7 +209,7 @@ class Exporter(object):
         )
         # general device info metric
         self.version_info.labels(
-            project_version="0.1"
+            project_version="&&BUILD_VERSION&&"
         ).set(1)
 
     def typeExists(self, listelement):
@@ -301,10 +301,10 @@ class Exporter(object):
     def __collect_data_from_Inverter(self):
 
         canConnectToEz1=False
+        s = socket.socket()
 
         try:
-            #Check Connection to EZ1
-            s = socket.socket()
+            #Check Connection to EZ1    
             try:
                 s.settimeout(5)
 
@@ -359,6 +359,13 @@ class Exporter(object):
             self.connected_info.set(0)
             self.metrics["p1"].set(0)
             self.metrics["p2"].set(0)
+            try:
+                s.close()
+                s = None
+            except:
+                logger.debug("Cleanup failed")
+            finally:
+                s = None
 
     def collect(self):
         """
